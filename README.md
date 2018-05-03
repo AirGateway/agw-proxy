@@ -43,12 +43,12 @@ internet.
 More layers of security can be added. But at least we encourage anyone using
 project to:
 
-- Set up CORS headers accordingly: to avoid receiving calls from other domains.
+- **Set up CORS headers**: to avoid receiving calls from other domains.
 
-- Set up CSP headers: to avoid calling this service using iframes and similar
+- **Set up CSP headers**: to avoid calling this service using iframes and similar
 attacks.
 
-- Set up CSRF tokens: not included here, because CSRF tokens are very tied to
+- **Set up CSRF tokens**: not included here, because CSRF tokens are very tied to
 your frontend implementation, but is highly recommended to implement it to
 avoid your proxy server being used by third parties.
 
