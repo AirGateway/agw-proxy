@@ -4,13 +4,22 @@ sharing secrets
 
 ## Usage
 
-This image can be used in any docker environment by setting the appropiated
-environment values.
-
-Public build is available as `airgateway/agw-proxy` on Docker Hub.
-
 The proxy works in a way that it receives requests in `/:version/:method` and
 proxies them to `:upstream/:version/:method`, adding the `Authorization` header.
+
+Public Docker image is available as `airgateway/agw-proxy` on Docker Hub.
+
+It could be tested directly just by doing:
+
+```
+$ docker run -it -p 8000:8000 -e API_KEY=<YOUR_API_KEY> airgateway/agw-proxy
+```
+
+or point to production environemnt by doing:
+
+```
+$ docker run -it -p 8000:8000 -e API_KEY=<YOUR_API_KEY> API_URL=<API_PRODUCTION_URL> airgateway/agw-proxy
+```
 
 ### Why is this important?
 
