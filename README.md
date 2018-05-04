@@ -42,6 +42,10 @@ it's `https://proxy.airgateway.net`, our sandbox environment.
 - **LISTEN**: the listen URL of the server. By default is 0.0.0.0 (from
 everywhere).
 
+- **CORS_ORIGIN**: the url (in format `schema://url:port`, like
+`http://ndc.myapp.com` or `https://ndc.myapp.com:8081`) from which the requests
+are enabled using CORS.
+
 **Note about `LISTEN`**: take care that in most docker environments (Kubernetes,
 Docker Compose, etc.) the IP from which the communications are received is not
 the real remote IP, as there are network layers between the container and

@@ -12,13 +12,15 @@ import (
 
 	"github.com/AirGateway/agw-proxy/logger"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 const (
-	apiURLEnv = "API_URL"
-	apiKeyEnv = "API_KEY"
-	portEnv   = "PORT"
-	listenEnv = "LISTEN"
+	apiURLEnv        = "API_URL"
+	apiKeyEnv        = "API_KEY"
+	portEnv          = "PORT"
+	listenEnv        = "LISTEN"
+	corsOriginURLEnv = "CORS_ORIGIN"
 
 	defaultAPIURL = "https://proxy.airgateway.net"
 	defaultPort   = "8000"
@@ -26,11 +28,12 @@ const (
 )
 
 var (
-	apiURL     *url.URL
-	apiKey     string
-	port       int
-	listen     string
-	httpClient = new(http.Client)
+	apiURL        *url.URL
+	apiKey        string
+	port          int
+	listen        string
+	corsOriginURL string
+	httpClient    = new(http.Client)
 )
 
 func init() {
@@ -65,6 +68,8 @@ func init() {
 	if listen == "" {
 		listen = defaultListen
 	}
+
+	corsOriginURL = os.Getenv(corsOriginURLEnv)
 }
 
 func main() {
@@ -76,13 +81,24 @@ func main() {
 
 	logger.Info("[HTTP] Started listening at %s:%d", listen, port)
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", listen, port),
-		Handler: logRequest(router),
+	handler := logRequest(router)
+
+	if corsOriginURL != "" {
+		logger.Info("CORS enabled for %s", corsOriginURL)
+
+		c := cors.New(cors.Options{
+			AllowedOrigins: []string{corsOriginURL},
+			AllowedHeaders: []string{"*"},
+			AllowedMethods: []string{"GET", "POST", "OPTIONS"},
+		})
+
+		handler = logRequest(c.Handler(router))
 	}
 
+	listenAddr := fmt.Sprintf("%s:%d", listen, port)
+
 	// Run our server in a goroutine so that it doesn't block.
-	if err := srv.ListenAndServe(); err != nil {
+	if err := http.ListenAndServe(listenAddr, handler); err != nil {
 		logger.Panic(err)
 	}
 }
